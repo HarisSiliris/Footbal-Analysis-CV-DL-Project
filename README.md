@@ -1,2 +1,4 @@
+This repository is for academic purposes as part of TDT4265 (NTNU).
+
 # Footbal-Analysis-CV-DL-Project
 The focus of this academic project is to harness the power of deep learning to analyze football match footage, extracting valuable insights for RBK (or their opponents). The main tasks here will be to detect and track the players / referee and ball.
