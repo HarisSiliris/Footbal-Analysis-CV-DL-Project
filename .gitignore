@@ -1,0 +1,14 @@
+# Data
+data/
+
+# Models
+*.pt
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs
+runs/
+experiments/
