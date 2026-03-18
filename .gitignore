@@ -1,5 +1,7 @@
 # Data
 data/
+datasets/
+Football2025/
 
 # Models
 *.pt
@@ -12,3 +14,5 @@ __pycache__/
 # Logs
 runs/
 experiments/
+
+results/
