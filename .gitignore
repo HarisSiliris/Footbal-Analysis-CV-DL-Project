@@ -18,4 +18,5 @@ experiments/
 # Results
 results/
 .venv/
+.venv311/
 logs/
