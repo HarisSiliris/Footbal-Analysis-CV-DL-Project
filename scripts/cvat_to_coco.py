@@ -6,6 +6,15 @@ from collections import defaultdict
 import argparse
 
 
+def _parse_box_attributes(box):
+    attrs = {}
+    for attr in box.findall("attribute"):
+        name = attr.get("name")
+        if name:
+            attrs[name] = (attr.text or "").strip()
+    return attrs
+
+
 def convert_to_coco(dataset_root, output_path):
 
     coco = {
@@ -58,6 +67,7 @@ def convert_to_coco(dataset_root, output_path):
         # Parse tracks
         for track in root.findall("track"):
             label = track.get("label")
+            track_id = track.get("id")
 
             for box in track.findall("box"):
                 frame = int(box.get("frame"))
@@ -65,10 +75,17 @@ def convert_to_coco(dataset_root, output_path):
                 ytl = float(box.get("ytl"))
                 xbr = float(box.get("xbr"))
                 ybr = float(box.get("ybr"))
+                outside = box.get("outside")
+                occluded = box.get("occluded")
+                attrs = _parse_box_attributes(box)
 
                 frames_dict[frame].append({
                     "label": label,
-                    "bbox": [xtl, ytl, xbr, ybr]
+                    "bbox": [xtl, ytl, xbr, ybr],
+                    "track_id": track_id,
+                    "outside": outside,
+                    "occluded": occluded,
+                    "attributes": attrs
                 })
 
         for frame_id in sorted(frames_dict.keys()):
@@ -99,6 +116,12 @@ def convert_to_coco(dataset_root, output_path):
             for obj in frames_dict[frame_id]:
 
                 label = obj["label"]
+                attrs = obj.get("attributes", {})
+
+                # Promote referee boxes from player tracks if team=referee
+                if label == "player" and attrs.get("team") == "referee":
+                    label = "referee"
+
                 if label not in category_map:
                     continue
 
@@ -113,7 +136,12 @@ def convert_to_coco(dataset_root, output_path):
                     "category_id": category_map[label],
                     "bbox": [xtl, ytl, width_box, height_box],
                     "area": width_box * height_box,
-                    "iscrowd": 0
+                    "iscrowd": 0,
+                    # Preserve CVAT metadata for tracking/visibility use
+                    "track_id": obj.get("track_id"),
+                    "visible": obj.get("outside") == "0",
+                    "occluded": obj.get("occluded") == "1",
+                    "attributes": attrs
                 }
 
                 coco["annotations"].append(annotation)

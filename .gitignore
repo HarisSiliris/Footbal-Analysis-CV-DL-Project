@@ -15,4 +15,7 @@ __pycache__/
 runs/
 experiments/
 
+# Results
 results/
+.venv/
+logs/
