@@ -84,6 +84,30 @@ tail -f logs/yolo_val-<jobid>.out
 Make sure `datasets/football_coco/data.yaml` points to your local dataset path.
 Make sure `datasets/football_coco/splits/train.txt` and `val.txt` contain valid local image paths.
 
+**Dataset formatting**
+If the cluster dataset is still in the original `Football2025`/CVAT structure, run the scripts in this order:
+
+1. `scripts/cvat_to_coco.py`
+   - Convert CVAT/XML annotations in `Football2025/*` to COCO-style `annotations.json`.
+   - Write image files and the COCO annotation JSON.
+2. `scripts/create_coco_splits.py`
+   - Split COCO data into `train`, `val`, and `test` subsets.
+   - Produce `train.json`, `val.json`, `test.json`, and optional `*_ids.txt` files.
+3. `scripts/prepare_yolo_from_coco.py`
+   - Convert COCO annotations into YOLO label files.
+   - Create `splits/train.txt`, `splits/val.txt`, and `splits/test.txt`.
+   - Write `data.yaml` for YOLO training.
+4. `scripts/train_yolo.py`
+   - Use the generated `data.yaml` and labels to train the detector.
+
+Example commands:
+```bash
+python scripts/cvat_to_coco.py --data /path/to/Football2025 --output /path/to/output_coco
+python scripts/create_coco_splits.py --coco /path/to/output_coco/annotations.json --out /path/to/output_coco/splits
+python scripts/prepare_yolo_from_coco.py --coco /path/to/output_coco/annotations.json --out /path/to/your/yolo_dataset --splits /path/to/output_coco/splits
+python scripts/train_yolo.py --data /path/to/your/yolo_dataset/data.yaml --model yolov8s.pt --epochs 100 --imgsz 1280 --batch 8 --device 0
+```
+
 **Outputs**
 Training outputs are saved under `runs/detect/train*`.
 Validation outputs are saved under `runs/detect/val*`.
