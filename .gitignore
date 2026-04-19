@@ -1,5 +1,4 @@
 # Data
-data/
 datasets/
 Football2025/
 
@@ -10,13 +9,21 @@ Football2025/
 # Python
 __pycache__/
 *.pyc
+.ipynb_checkpoints/
 
-# Logs
-runs/
-experiments/
-
-# Results
-results/
+# Environments
 .venv/
 .venv311/
+
+# Logs and outputs
+runs/
+results/
+
 logs/
+*.mp4
+*.avi
+*.mov
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

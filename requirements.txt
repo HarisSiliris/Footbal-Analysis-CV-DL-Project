@@ -2,7 +2,9 @@ torch
 torchvision
 ultralytics
 opencv-python
+pillow
 matplotlib
 numpy
 pandas
 deep-sort-realtime
+motmetrics
